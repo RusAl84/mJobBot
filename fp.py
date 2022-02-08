@@ -1,16 +1,26 @@
+import imp
 import json
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+from pjson import pjson
 
-def fp(login='rusal', getpdn='passport'):
+def fp(gPlace=""):
 
-    fileObject = open("data.json", "r")
+    fileObject = open("data.json", "r",encoding="UTF-8")
     jsonContent = fileObject.read()
     ListOfItem = json.loads(jsonContent)
-    result=''
+    nList=[]
     for item in ListOfItem:
-        if str(item['login']).lower()==str(login).lower():
-            result=item['data'][getpdn]
-    print(result)
-    return str(result)
+        a = fuzz.WRatio(item['place'], gPlace)
+        item['ratio']=a
+        # print(a)
+        nList.append(item)   
+    str1=""
+    for item in nList:
+        if item['ratio']>=85:
+            str1+=pjson(item)+'\n\n'
+    return str1
 
 if __name__ == '__main__':
-    ip1 = '10.1.1.1'
+    l=fp("Университет")
+    print(l)
